@@ -1,0 +1,42 @@
+VIEW
+
+CREATE OR REPLACE VIEW view_acompanhamento_alunos AS
+   SELECT 
+	alu.matricula_aluno,
+	alu.nome_aluno,
+        aa.nt_A1_participacao,
+        aa.nt_A1_interesse,
+        aa.nt_A1_organizacao,
+        aa.nt_A1_comprometimento,
+        aa.nt_A1_disciplina,
+        aa.nt_A1_coorperacao,
+        aa.nt_A1_observacao,
+        aa.nt_A2_participacao,
+        aa.nt_A2_interesse,
+        aa.nt_A2_organizacao,
+        aa.nt_A2_comprometimento,
+        aa.nt_A2_disciplina,
+        aa.nt_A2_coorperacao,
+        aa.nt_A2_observacao,
+        aa.nt_A3_participacao,
+        aa.nt_A3_interesse,
+        aa.nt_A3_organizacao,
+        aa.nt_A3_comprometimento,
+        aa.nt_A3_disciplina,
+        aa.nt_A3_coorperacao,
+        aa.nt_A3_observacao,
+        aa.nt_A4_participacao,
+        aa.nt_A4_interesse,
+        aa.nt_A4_organizacao,
+        aa.nt_A4_comprometimento,
+        aa.nt_A4_disciplina,
+        aa.nt_A4_coorperacao,
+        aa.nt_A4_observacao,
+        aa.obs_aluno
+        
+       
+        
+    FROM
+        avaliacao_conselho aa
+            INNER JOIN
+        alunos alu ON aa.cod_aluno = alu.cod_aluno;
