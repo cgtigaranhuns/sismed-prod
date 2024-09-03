@@ -28,6 +28,7 @@ class TabelaMedidasPorCategoria extends BaseWidget
             return false;
         }
     }
+    
    protected int | string | array $columnSpan = 'full';
 
     protected static ?int $sort = 4;
