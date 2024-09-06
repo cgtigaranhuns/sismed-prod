@@ -199,6 +199,7 @@ class MedidaDisciplinarResource extends Resource
                             ->default(now())
                             ->required(),
                         Forms\Components\Select::make('nivel')
+                            ->required()
                             ->options([
                                 '1' => 'LEVE',
                                 '2' => 'MÉDIO',
@@ -212,11 +213,11 @@ class MedidaDisciplinarResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('user_id')
                     ->label('Cadastrante')
+                    ->disabled()
                     ->required(true)
                     ->native(false)
-                    ->native(false)
                     ->default(auth()->user()->id)
-                    ->options(User::where('id', auth()->user()->id)->pluck('name', 'id')->toArray()),
+                    ->relationship(name: 'user', titleAttribute: 'name'),
 
                 Forms\Components\Select::make('categoria_id')
                     ->relationship(
