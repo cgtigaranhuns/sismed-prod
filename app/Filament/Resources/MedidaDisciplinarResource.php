@@ -59,7 +59,7 @@ class MedidaDisciplinarResource extends Resource
                         //VERIFICAR SE DISCENTE JÁ TEM REGISTRO
 
                         $md = MedidaDisciplinar::where('discente_id', $state);
-                        $md_cat = $md->first();
+                        $md_cat = $md->orderBy('id', 'DESC')->first();
                         $cont_md = $md->count();
 
                         //  dd($cont_md);
