@@ -8,71 +8,181 @@
     <title>Document</title>
 
     <style>
-        .tabela {
-            border: 1px;
-            border-style: ;
-            border-color: grey;
-            width: 100%;
-            margin-top: 0%;
-            font-family: courier, Arial, Helvetica, sans-serif;
+        body {
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            background: #fff;
+            color: #222;
+            margin: 30px;
         }
 
-        .alinhamento {
-            text-align-last: right;
-            font-size: 12pt;
-            font-weight: bold;
-            line-height: 1.8;
-            align-items: flex-end;
+        .tabela {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
 
+        .tabela td, .tabela th {
+            border: 1px solid #d1d5db;
+            padding: 10px 12px;
+            font-size: 14px;
+            vertical-align: top;
+        }
+
+        .tabela th {
+            background: #f3f4f6;
+            font-weight: bold;
+        }
+
+        fieldset {
+            border: 1.5px solid #4b5563;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            padding: 18px 20px 10px 20px;
+            background: #f9fafb;
+        }
+
+        legend {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #374151;
+            padding: 0 8px;
+        }
+
+        label.alinhamento {
+            
+            min-width: 90px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .header-table {
+            width: 100%;
+            margin-bottom: 18px;
+        }
+
+        .header-table td {
+            border: none;
+            vertical-align: middle;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 4px;
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+        }
+
+        .header-subtitle {
+            font-size: 17px;
+            color: #374151;
+            text-align: center;
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+        }
+
+        .assinatura-table {
+            margin-top: 70px;
+            width: 100%;
+        }
+
+        .assinatura-table td {
+            text-align: center;
+            border: none;
+            font-size: 14px;
+        }
+
+        .assinatura-label {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .assinatura-nome {
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .assinatura-linha {
+            display: block;
+            margin: 0 auto 6px auto;
+            width: 80%;
+            border-bottom: 1.5px solid #374151;
+            height: 24px;
+        }
+
+        .center {
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
-    <table>
+    <table class="header-table">
         <tr>
-            <td><img src="{{ asset('img/logo-ifpe.png') }}" alt="Logo" width="150" height="200"></td>
+            <td style="width: 160px;">
+                <img src="{{ asset('img/logo-ifpe.png') }}" alt="Logo" width="120" height="160">
+            </td>
             <td>
-                <p style="width: 100%; font-size:20px; font-family: 'courier,arial,helvetica font-weight: bold;"
-                    align="center">COORDENAÇÃO DE APOIO AO ENSINO E AO ESTUDANTE</p>
-                <p style="width: 100%; font-size:18px; font-family: 'courier,arial,helvetica font-weight: bold;"
-                    align="center">COMPROVANTE DE MEDIDA DISCIPLINAR</p>
+                <div class="header-title">COORDENAÇÃO DE APOIO AO ENSINO E AO ESTUDANTE</div>
+                <div class="header-subtitle">COMPROVANTE DE MEDIDA DISCIPLINAR</div>
             </td>
         </tr>
     </table>
 
-            <div align="center">Medida Disciplinar nº {{$md->id}}</div>
+    <div class="center" style="font-size: 16px; font-weight: bold; margin-bottom: 18px;">
+        Medida Disciplinar nº {{$md->id}}
+    </div>
 
     <fieldset>
         <legend>Identificação</legend>
         <table class="tabela">
             <tr>
+            @if(empty($nomeDiscente) && !empty($grupoDiscentes) && count($grupoDiscentes))
+                @foreach($grupoDiscentes as $discente)
+                    <tr>
+                        <td>
+                            <label class="alinhamento">Nome:</label>
+                            {{ $discente->name ?? '-' }}
+                        </td>
+                        <td>
+                            <label class="alinhamento">Matrícula:</label>
+                            {{ $discente->username ?? '-' }}
+                        </td>
+                    </tr>
+                @endforeach
+            @else
                 <td>
                     <label class="alinhamento">Nome:</label>
-                    {{ $nomeDiscente }}
+                    {{ $nomeDiscente ?? '-' }}
                 </td>
                 <td>
                     <label class="alinhamento">Matrícula:</label>
-                    {{ $matriculaDiscente }}
+                    {{ $matriculaDiscente ?? '-' }}
                 </td>
+            @endif
+            </tr>
             <tr>
                 <td>
                     <label class="alinhamento">Curso:</label>
-                    {{ $cursoDiscente }}
+                    {{ $cursoDiscente ?? '-' }}
                 </td>
                 <td>
                     <label class="alinhamento">Turno:</label>
-                    {{ $turnoDiscente }}
+                    {{ $turnoDiscente ?? '-' }}
                 </td>
             </tr>
             <tr>
                 <td>
                     <label class="alinhamento">Modalidade:</label>
-                    {{ $modalidadeDiscente }}
+                    {{ $modalidadeDiscente ?? '-' }}
                 </td>
                 <td>
                     <label class="alinhamento">Período/Ano:</label>
-                    {{ $periodoDiscente }}
+                    {{ $periodoDiscente ?? '-' }}
                 </td>
             </tr>
         </table>
@@ -84,26 +194,27 @@
             <tr>
                 <td>
                     <label class="alinhamento">Data:</label>
-                    {{ \Carbon\Carbon::parse($md->data)->format('d/m/Y') }}
+                    {{ $md->data ? \Carbon\Carbon::parse($md->data)->format('d/m/Y') : '-' }}
                 </td>
                 <td>
                     <label class="alinhamento">Hora:</label>
-                    {{ $md->hora }}
+                    {{ $md->hora ?? '-' }}
                 </td>
+            </tr>
             <tr>
                 <td>
                     <label class="alinhamento">Gravidade:</label>
-                    {{ $nivel }}
+                    {{ $nivel ?? '-' }}
                 </td>
                 <td>
                     <label class="alinhamento">Penalidade:</label>
-                    {{ $nomePenalidade }}
+                    {{ $nomePenalidade ?? '-' }}
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
                     <label class="alinhamento">Categoria:</label>
-                    {{ $nomeCategoria }}
+                    {{ $nomeCategoria ?? '-' }}
                 </td>
             </tr>
         </table>
@@ -115,39 +226,40 @@
             <tr>
                 <td>
                     <label class="alinhamento">Descrição:</label>
-                    {{ $md->descricao }}
+                    {{ $md->descricao ?? '-' }}
                 </td>
             </tr>
         </table>
     </fieldset>
 
-
-    <table style="margin-top: 210px; width: 100%;  font-family: courier,arial,helvetica;">
+    <table class="assinatura-table">
         <tr>
-            <td style="text-align: center;">
-                ____________________________________<br>
-                <label>Assinatura do Servidor</label><br>
-                <label><b>{{$md->user->name}}</b></label><br>
-                <label><b>SIAPE:</b>{{$md->user->username}}</label>
-
+            <td>
+                <span class="assinatura-linha"></span>
+                <div class="assinatura-label">Assinatura do Servidor</div>
+                <div class="assinatura-nome">{{$md->user->name}}</div>
+                <div class="assinatura-label"><b>SIAPE:</b> {{$md->user->username}}</div>
             </td>
-            <td style="text-align: center;">
-
-                ____________________________________<br>
-                <label>Assinatura do Discente</label><br>
-                <label><b>{{$md->discente->name}}</b></label><br>
-                <label><b>Matrícula:</b>{{$md->discente->username}}</label>
-
-
-
-
+            <td>
+                @if(empty($nomeDiscente) && !empty($grupoDiscentes) && count($grupoDiscentes))
+                    @foreach($grupoDiscentes as $discente)
+                        <span class="assinatura-linha"></span>
+                        <div class="assinatura-label">Assinatura do Discente</div>
+                        <div class="assinatura-nome">{{ $discente->name ?? '-' }}</div>
+                        <div class="assinatura-label"><b>Matrícula:</b> {{ $discente->username ?? '-' }}</div>
+                        @if(!$loop->last)
+                            <br>
+                        @endif
+                    @endforeach
+                @else
+                    <span class="assinatura-linha"></span>
+                    <div class="assinatura-label">Assinatura do Discente</div>
+                    <div class="assinatura-nome">{{ $md->discente->name ?? null }}</div>
+                    <div class="assinatura-label"><b>Matrícula:</b> {{ $md->discente->username ?? null }}</div>
+                @endif
             </td>
         </tr>
     </table>
-
-
-
-
 </body>
 
 </html>

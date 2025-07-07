@@ -13,6 +13,7 @@ class MedidaDisciplinar extends Model
 
     protected $fillable = [
         'discente_id',
+        'grupo_discentes_id',
         'user_id',
         'data',
         'hora',
@@ -20,6 +21,13 @@ class MedidaDisciplinar extends Model
         'nivel',
         'categoria_id',
         'descricao',
+    ];
+
+   
+
+    protected $casts = [
+        'grupo_discentes_id' => 'array',
+
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -34,6 +42,11 @@ class MedidaDisciplinar extends Model
         return $this->belongsTo(Discente::class);
     }
 
+    public function GrupoDiscente() {
+        return $this->belongsTo(Discente::class);
+    }
+
+    
     public function User() {
         return $this->belongsTo(User::class);
     }

@@ -50,9 +50,9 @@ class MedidaDisciplinarResource extends Resource
                     ->live()
                     ->relationship(
                         name: 'Discente',
-                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('name')->orderBy('username'),
+                        modifyQueryUsing: fn(Builder $query) => $query->orderBy('name')->orderBy('username'),
                     )
-                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->username}")
+                    ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->username}")
                     ->searchable(['name', 'username'])
                     ->afterStateUpdated(function ($state) {
 
@@ -84,74 +84,71 @@ class MedidaDisciplinarResource extends Resource
                                 ->persistent()
                                 ->send();
                         }
-                         //VERIFICA NO SCOLAR 
+                        //VERIFICA NO SCOLAR 
 
-                         $discente = Discente::find($state);
+                        $discente = Discente::find($state);
 
-                         $matriculaDiscente = $discente->username;
+                        $matriculaDiscente = $discente->username;
                         // dd($matriculaDiscente);
-                         // $matriculaDiscente = '20141F2GR0292';
-                         $scolar = ViewAcompanhamentoAluno::where('matricula_aluno', $matriculaDiscente)->orderBy('cod_aval', 'DESC')->limit(4)->get();
+                        // $matriculaDiscente = '20141F2GR0292';
+                        $scolar = ViewAcompanhamentoAluno::where('matricula_aluno', $matriculaDiscente)->orderBy('cod_aval', 'DESC')->limit(4)->get();
 
-                         //   dd($scolar->matricula_aluno);
+                        //   dd($scolar->matricula_aluno);
 
-                         
-                         if ($scolar != null) {
+
+                        if ($scolar != null) {
                             $i = 5;
-                             foreach ($scolar as $scolars) {
+                            foreach ($scolar as $scolars) {
 
-                                  $i--;
-                                
-                                 Notification::make()                                 
-                                     ->title('ATENÇÃO')
-                                     ->warning()
-                                     ->color('danger')
-                                     ->body(
-                                         '<b>PERFIL DO DISCENTE NO SCOLAR</b>.<br>
-                                         <b>4 ÚLTIMAS AVALIAÇÕES Nº </b>'.$i.'<br>
+                                $i--;
+
+                                Notification::make()
+                                    ->title('ATENÇÃO')
+                                    ->warning()
+                                    ->color('danger')
+                                    ->body(
+                                        '<b>PERFIL DO DISCENTE NO SCOLAR</b>.<br>
+                                         <b>4 ÚLTIMAS AVALIAÇÕES Nº </b>' . $i . '<br>
                                 
                                 PARTICIPAÇÃO: '  . $scolars->nt_A1_participacao . '-'
-                                             . $scolars->nt_A2_participacao . '-'
-                                             . $scolars->nt_A3_participacao . '-'
-                                             . $scolars->nt_A4_participacao . '-    
+                                            . $scolars->nt_A2_participacao . '-'
+                                            . $scolars->nt_A3_participacao . '-'
+                                            . $scolars->nt_A4_participacao . '-    
                                                    <br>                                                      
                                 INTERESSE: '      . $scolars->nt_A1_interesse . '-'
-                                             . $scolars->nt_A2_interesse . '-'
-                                             . $scolars->nt_A3_interesse . '-'
-                                             . $scolars->nt_A4_interesse . '-    
+                                            . $scolars->nt_A2_interesse . '-'
+                                            . $scolars->nt_A3_interesse . '-'
+                                            . $scolars->nt_A4_interesse . '-    
                                                     <br>           
                                 ORGANIZAÇÃO: '   . $scolars->nt_A1_organizacao . '-'
-                                             . $scolars->nt_A2_organizacao . '-'
-                                             . $scolars->nt_A3_organizacao . '-'
-                                             . $scolars->nt_A4_organizacao . '-    
+                                            . $scolars->nt_A2_organizacao . '-'
+                                            . $scolars->nt_A3_organizacao . '-'
+                                            . $scolars->nt_A4_organizacao . '-    
                                                      <br>           
                                 COMPROMETIMENTO: '  . $scolars->nt_A1_comprometimento . '-'
-                                             . $scolars->nt_A2_comprometimento . '-'
-                                             . $scolars->nt_A3_comprometimento . '-'
-                                             . $scolars->nt_A4_comprometimento . '-    
+                                            . $scolars->nt_A2_comprometimento . '-'
+                                            . $scolars->nt_A3_comprometimento . '-'
+                                            . $scolars->nt_A4_comprometimento . '-    
                                                       <br>           
                                 DISCIPLINA: '       . $scolars->nt_A1_disciplina . '-'
-                                             . $scolars->nt_A2_disciplina . '-'
-                                             . $scolars->nt_A3_disciplina . '-'
-                                             . $scolars->nt_A4_disciplina . '-    
+                                            . $scolars->nt_A2_disciplina . '-'
+                                            . $scolars->nt_A3_disciplina . '-'
+                                            . $scolars->nt_A4_disciplina . '-    
                                                        <br>           
                                 COOPERAÇÃO: '       . $scolars->nt_A1_cooperacao . '-'
-                                             . $scolars->nt_A2_cooperacao . '-'
-                                             . $scolars->nt_A3_cooperacao . '-'
-                                             . $scolars->nt_A4_cooperacao . '-    
-                                                        <br>'           
-                                 
+                                            . $scolars->nt_A2_cooperacao . '-'
+                                            . $scolars->nt_A3_cooperacao . '-'
+                                            . $scolars->nt_A4_cooperacao . '-    
+                                                        <br>'
 
-                                     )
 
-                                     ->persistent()
-                                  //  ->duration(5000)
-                                     ->send();
-                                    
-                             }
-                         }                         
-                         
-                         
+                                    )
+
+                                    ->persistent()
+                                    //  ->duration(5000)
+                                    ->send();
+                            }
+                        }
                     })
                     ->editOptionForm([
 
@@ -167,7 +164,7 @@ class MedidaDisciplinarResource extends Resource
                                         $idade = Carbon::parse($state)->age;
                                         $set('idade', $idade);
                                     }),
-                                
+
                                 Forms\Components\Select::make('curso_id')
                                     ->relationship(name: 'curso', titleAttribute: 'nome'),
                                 Forms\Components\Select::make('periodo_id')
@@ -192,6 +189,19 @@ class MedidaDisciplinarResource extends Resource
                 ])
 
                     ->schema([
+                        Forms\Components\Select::make('grupo_discentes_id')
+                            ->label('Grupo de Discentes')
+                            ->native(false)
+                            ->live()
+                            ->multiple()
+                            ->relationship(
+                                name: 'GrupoDiscente',
+                                modifyQueryUsing: fn(Builder $query) => $query->orderBy('name')->orderBy('username'),
+                            )
+                            ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->username}")
+                            ->searchable(['name', 'username'])
+                            ->native(false)
+                            ->columnSpanFull(),
                         Forms\Components\DatePicker::make('data')
                             ->default(now())
                             ->required(),
@@ -222,9 +232,9 @@ class MedidaDisciplinarResource extends Resource
                 Forms\Components\Select::make('categoria_id')
                     ->relationship(
                         name: 'Categoria',
-                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('nome')->orderBy('codigo'),
+                        modifyQueryUsing: fn(Builder $query) => $query->orderBy('nome')->orderBy('codigo'),
                     )
-                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->nome} - {$record->codigo}")
+                    ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->nome} - {$record->codigo}")
                     ->searchable(['nome', 'codigo'])
                     ->columnSpanFull()
                     ->native(false)
@@ -242,11 +252,35 @@ class MedidaDisciplinarResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('data', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('discente.name')
                     ->searchable()
                     ->label('Discente')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('grupo_discentes_id')
+                    ->label('Grupo de Discentes')
+                    ->formatStateUsing(function ($state) {
+                        if (empty($state)) {
+                            return '-';
+                        }
+                        // Se $state for string (ex: "1,2,3"), converte para array
+                        if (is_string($state)) {
+                            $state = array_filter(explode(',', $state));
+                        }
+                        if (!is_array($state)) {
+                            return '-';
+                        }
+                        // Busca os nomes e usernames dos discentes pelos IDs
+                        $discentes = \App\Models\Discente::whereIn('id', $state)->get(['name', 'username']);
+                        // Junta nome e username com quebra de linha
+                        return $discentes->map(function ($discente) {
+                            return "{$discente->name} - {$discente->username}";
+                        })->implode('<br>');
+                
+                    })
+                    ->html(),
+
                 Tables\Columns\TextColumn::make('data')
                     ->date('d/m/Y')
                     ->sortable(),
@@ -266,34 +300,34 @@ class MedidaDisciplinarResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                
-            SelectFilter::make('discente')->searchable()->relationship('discente', 'name'),
-            SelectFilter::make('penalidade')->searchable()->relationship('penalidade', 'nome'),
-            SelectFilter::make('categoria')->searchable()->relationship('categoria', 'nome'),
-            Tables\Filters\Filter::make('datas')
-                ->form([
-                    DatePicker::make('data_ocorrencia_de')
-                        ->label('Data de:'),
-                    DatePicker::make('data_ocorrencia_ate')
-                        ->label('Data ate:'),
-                ])
-                ->query(function ($query, array $data) {
-                    return $query
-                        ->when(
-                            $data['data_ocorrencia_de'],
-                            fn($query) => $query->whereDate('data', '>=', $data['data_ocorrencia_de'])
-                        )
-                        ->when(
-                            $data['data_ocorrencia_ate'],
-                            fn($query) => $query->whereDate('data', '<=', $data['data_ocorrencia_ate'])
-                        );
-                })
+
+                SelectFilter::make('discente')->searchable()->relationship('discente', 'name'),
+                SelectFilter::make('penalidade')->searchable()->relationship('penalidade', 'nome'),
+                SelectFilter::make('categoria')->searchable()->relationship('categoria', 'nome'),
+                Tables\Filters\Filter::make('datas')
+                    ->form([
+                        DatePicker::make('data_ocorrencia_de')
+                            ->label('Data de:'),
+                        DatePicker::make('data_ocorrencia_ate')
+                            ->label('Data ate:'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['data_ocorrencia_de'],
+                                fn($query) => $query->whereDate('data', '>=', $data['data_ocorrencia_de'])
+                            )
+                            ->when(
+                                $data['data_ocorrencia_ate'],
+                                fn($query) => $query->whereDate('data', '<=', $data['data_ocorrencia_ate'])
+                            );
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('Imprimir_md')
                     ->label('Imprimir Comprovante')
-                    ->url(fn (MedidaDisciplinar $record): string => route('imprimirMd', $record))
+                    ->url(fn(MedidaDisciplinar $record): string => route('imprimirMd', $record))
                     ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make(),
             ])
