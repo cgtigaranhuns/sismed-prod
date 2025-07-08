@@ -238,7 +238,7 @@ class MedidaDisciplinarResource extends Resource
                     $discentes = is_array($state) ? Discente::whereIn('id', $state)->get() : collect([Discente::find($state)]);
 
                     foreach ($discentes as $discente) {
-                        if (!$discente) {
+                        if (!$discente->username) {
                             continue;
                         }
                         $matriculaDiscente = $discente->username;
