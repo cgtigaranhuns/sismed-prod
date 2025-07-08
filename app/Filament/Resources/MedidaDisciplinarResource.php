@@ -59,7 +59,7 @@ class MedidaDisciplinarResource extends Resource
                         if (!$state) return;
 
                         //VERIFICAR SE DISCENTE JÁ TEM REGISTRO
-                        $md = MedidaDisciplinar::where('discente_id', $state);
+                        $md = MedidaDisciplinar::where('discente_id', $state)->orWhere('grupo_discentes_id', $state);
                         $md_cat = $md->orderBy('id', 'DESC')->first();
                         $cont_md = $md->count();
 
@@ -190,8 +190,7 @@ class MedidaDisciplinarResource extends Resource
                         Forms\Components\Select::make('grupo_discentes_id')
                             ->label('Grupo de Discentes')
                             ->native(false)
-                            ->live(debounce: 300)
-                            ->multiple()
+                            ->live(debounce: 300)                            
                             ->relationship(
                                 name: 'GrupoDiscente',
                                 modifyQueryUsing: fn(Builder $query) => $query->orderBy('name')->orderBy('username'),
@@ -199,98 +198,107 @@ class MedidaDisciplinarResource extends Resource
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->username}")
                             ->searchable(['name', 'username'])
                             ->native(false)
+                            ->multiple()
                             ->afterStateUpdated(function ($state) {
-
-                        //VERIFICAR SE DISCENTE JÁ TEM REGISTRO
-
-                        $md = MedidaDisciplinar::where('discente_id', $state);
-                        $md_cat = $md->orderBy('id', 'DESC')->first();
-                        $cont_md = $md->count();
-
-                        //  dd($cont_md);
-                        if ($cont_md > 0) {
-                            Notification::make()
-                                ->title('ATENÇÃO')
-                                ->warning()
-                                ->color('danger')
-                                ->body(
-                                    'DISCENTE  JÁ TEM <b>' . $cont_md . '</b> MEDIDA DISCIPLINAR CADASTRADA.<br> 
-                                 A ÚLTIMA FOI:<br> 
-                                 <b>DATA:</b>  ' . \Carbon\Carbon::parse($md_cat->data)->format('d/m/Y') . '<br>
-                                 <b>CATEGORIA:</b> ' . $md_cat->categoria->nome . '<br>
-                                 <b>PENALIDADE:</b> ' . $md_cat->penalidade->nome . ''
-
-                                )
-                                ->actions([
-                                    Action::make('Consultar')
-                                        ->button()
-                                        ->url(route('filament.admin.resources.medida-disciplinars.index'), shouldOpenInNewTab: true),
-                                ])
-                                ->persistent()
-                                ->send();
+                        if (empty($state)) {
+                            return;
                         }
-                        //VERIFICA NO SCOLAR 
 
-                    // Se $state for array (múltiplos IDs), processa cada discente
-                    $discentes = is_array($state) ? Discente::whereIn('id', $state)->get() : collect([Discente::find($state)]);
+                        // VERIFICAR SE DISCENTE JÁ TEM REGISTRO
+                        $discentes = is_array($state) ? $state : [$state];
+                        
+                        foreach ($discentes as $discenteId) {
+                            $md = MedidaDisciplinar::where('discente_id', $discenteId)
+                                ->orWhere('grupo_discentes_id', 'like', '%' . $discenteId . '%');
+                            $md_cat = $md->orderBy('id', 'DESC')->first();
+                            $cont_md = $md->count();
 
-                    foreach ($discentes as $discente) {
-                        if (!$discente->username) {
-                            continue;
-                        }
-                        $matriculaDiscente = $discente->username;
-                        // $matriculaDiscente = '20141F2GR0292';
-                        $scolar = ViewAcompanhamentoAluno::where('matricula_aluno', $matriculaDiscente)->orderBy('cod_aval', 'DESC')->limit(4)->get();
-
-                        if ($scolar != null && $scolar->count() > 0) {
-                            $i = 5;
-                            foreach ($scolar as $scolars) {
-                                $i--;
-
+                            if ($cont_md > 0 && $md_cat) {
                                 Notification::make()
                                     ->title('ATENÇÃO')
                                     ->warning()
                                     ->color('danger')
                                     ->body(
-                                        '<b>PERFIL DO DISCENTE ' .$scolars->nome_aluno. ' NO SCOLAR</b>.<br>
-                                         <b>4 ÚLTIMAS AVALIAÇÕES Nº </b>' . $i . '<br>
-                                
-                                PARTICIPAÇÃO: '  . $scolars->nt_A1_participacao . '-'
-                                            . $scolars->nt_A2_participacao . '-'
-                                            . $scolars->nt_A3_participacao . '-'
-                                            . $scolars->nt_A4_participacao . '-    
-                                                   <br>                                                      
-                                INTERESSE: '      . $scolars->nt_A1_interesse . '-'
-                                            . $scolars->nt_A2_interesse . '-'
-                                            . $scolars->nt_A3_interesse . '-'
-                                            . $scolars->nt_A4_interesse . '-    
-                                                    <br>           
-                                ORGANIZAÇÃO: '   . $scolars->nt_A1_organizacao . '-'
-                                            . $scolars->nt_A2_organizacao . '-'
-                                            . $scolars->nt_A3_organizacao . '-'
-                                            . $scolars->nt_A4_organizacao . '-    
-                                                     <br>           
-                                COMPROMETIMENTO: '  . $scolars->nt_A1_comprometimento . '-'
-                                            . $scolars->nt_A2_comprometimento . '-'
-                                            . $scolars->nt_A3_comprometimento . '-'
-                                            . $scolars->nt_A4_comprometimento . '-    
-                                                      <br>           
-                                DISCIPLINA: '       . $scolars->nt_A1_disciplina . '-'
-                                            . $scolars->nt_A2_disciplina . '-'
-                                            . $scolars->nt_A3_disciplina . '-'
-                                            . $scolars->nt_A4_disciplina . '-    
-                                                       <br>           
-                                COOPERAÇÃO: '       . $scolars->nt_A1_cooperacao . '-'
-                                            . $scolars->nt_A2_cooperacao . '-'
-                                            . $scolars->nt_A3_cooperacao . '-'
-                                            . $scolars->nt_A4_cooperacao . '-    
-                                                        <br>'
+                                        'DISCENTE  JÁ TEM <b>' . $cont_md . '</b> MEDIDA DISCIPLINAR CADASTRADA.<br> 
+                                     A ÚLTIMA FOI:<br> 
+                                     <b>DATA:</b>  ' . ($md_cat->data ? \Carbon\Carbon::parse($md_cat->data)->format('d/m/Y') : 'N/A') . '<br>
+                                     <b>CATEGORIA:</b> ' . ($md_cat->categoria ? $md_cat->categoria->nome : 'N/A') . '<br>
+                                     <b>PENALIDADE:</b> ' . ($md_cat->penalidade ? $md_cat->penalidade->nome : 'N/A') . ''
                                     )
+                                    ->actions([
+                                        Action::make('Consultar')
+                                            ->button()
+                                            ->url(route('filament.admin.resources.medida-disciplinars.index'), shouldOpenInNewTab: true),
+                                    ])
                                     ->persistent()
                                     ->send();
                             }
                         }
-                    }
+
+                        //VERIFICA NO SCOLAR 
+                        $discentes = Discente::whereIn('id', $discentes)->get();
+
+                        foreach ($discentes as $discente) {
+                            if (empty($discente->username)) {
+                                continue;
+                            }
+
+                            $matriculaDiscente = $discente->username;
+                            $scolar = ViewAcompanhamentoAluno::where('matricula_aluno', $matriculaDiscente)
+                                ->orderBy('cod_aval', 'DESC')
+                                ->limit(4)
+                                ->get();
+
+                            if ($scolar->isNotEmpty()) {
+                                $i = 5;
+                                foreach ($scolar as $scolars) {
+                                    $i--;
+                                    $nomeAluno = $scolars->nome_aluno ?? 'Nome não informado';
+
+                                    Notification::make()
+                                        ->title('ATENÇÃO')
+                                        ->warning()
+                                        ->color('danger')
+                                        ->body(
+                                            '<b>PERFIL DO DISCENTE ' . $nomeAluno . ' NO SCOLAR</b>.<br>
+                                             <b>4 ÚLTIMAS AVALIAÇÕES Nº </b>' . $i . '<br>
+                                    
+                                    PARTICIPAÇÃO: '  . ($scolars->nt_A1_participacao ?? '-') . '-'
+                                                . ($scolars->nt_A2_participacao ?? '-') . '-'
+                                                . ($scolars->nt_A3_participacao ?? '-') . '-'
+                                                . ($scolars->nt_A4_participacao ?? '-') . '-    
+                                                       <br>                                                      
+                                    INTERESSE: '      . ($scolars->nt_A1_interesse ?? '-') . '-'
+                                                . ($scolars->nt_A2_interesse ?? '-') . '-'
+                                                . ($scolars->nt_A3_interesse ?? '-') . '-'
+                                                . ($scolars->nt_A4_interesse ?? '-') . '-    
+                                                        <br>           
+                                    ORGANIZAÇÃO: '   . ($scolars->nt_A1_organizacao ?? '-') . '-'
+                                                . ($scolars->nt_A2_organizacao ?? '-') . '-'
+                                                . ($scolars->nt_A3_organizacao ?? '-') . '-'
+                                                . ($scolars->nt_A4_organizacao ?? '-') . '-    
+                                                         <br>           
+                                    COMPROMETIMENTO: '  . ($scolars->nt_A1_comprometimento ?? '-') . '-'
+                                                . ($scolars->nt_A2_comprometimento ?? '-') . '-'
+                                                . ($scolars->nt_A3_comprometimento ?? '-') . '-'
+                                                . ($scolars->nt_A4_comprometimento ?? '-') . '-    
+                                                          <br>           
+                                    DISCIPLINA: '       . ($scolars->nt_A1_disciplina ?? '-') . '-'
+                                                . ($scolars->nt_A2_disciplina ?? '-') . '-'
+                                                . ($scolars->nt_A3_disciplina ?? '-') . '-'
+                                                . ($scolars->nt_A4_disciplina ?? '-') . '-    
+                                                           <br>           
+                                    COOPERAÇÃO: '       . ($scolars->nt_A1_cooperacao ?? '-') . '-'
+                                                . ($scolars->nt_A2_cooperacao ?? '-') . '-'
+                                                . ($scolars->nt_A3_cooperacao ?? '-') . '-'
+                                                . ($scolars->nt_A4_cooperacao ?? '-') . '-    
+                                                            <br>'
+                                        )
+                                        ->persistent()
+                                        ->send();
+                                }
+                            }
+                        }
                     })
                             ->columnSpanFull(),
                         Forms\Components\DatePicker::make('data')
