@@ -55,7 +55,7 @@ class MedidaDisciplinarResource extends Resource
                     )
                     ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->username}")
                     ->searchable(['name', 'username'])
-                    ->afterStateUpdated(function ($state) {
+                     ->afterStateUpdated(function ($state) {
 
                         //VERIFICAR SE DISCENTE JÁ TEM REGISTRO
 
@@ -70,7 +70,7 @@ class MedidaDisciplinarResource extends Resource
                                 ->warning()
                                 ->color('danger')
                                 ->body(
-                                    'DISCENTE JÁ TEM <b>' . $cont_md . '</b> MEDIDA DISCIPLINAR CADASTRADA.<br> 
+                                    'DISCENTE  JÁ TEM <b>' . $cont_md . '</b> MEDIDA DISCIPLINAR CADASTRADA.<br> 
                                  A ÚLTIMA FOI:<br> 
                                  <b>DATA:</b>  ' . \Carbon\Carbon::parse($md_cat->data)->format('d/m/Y') . '<br>
                                  <b>CATEGORIA:</b> ' . $md_cat->categoria->nome . '<br>
@@ -87,20 +87,20 @@ class MedidaDisciplinarResource extends Resource
                         }
                         //VERIFICA NO SCOLAR 
 
-                        $discente = Discente::find($state);
+                    // Se $state for array (múltiplos IDs), processa cada discente
+                    $discentes = is_array($state) ? Discente::whereIn('id', $state)->get() : collect([Discente::find($state)]);
 
+                    foreach ($discentes as $discente) {
+                        if (!$discente->username) {
+                            continue;
+                        }
                         $matriculaDiscente = $discente->username;
-                        // dd($matriculaDiscente);
                         // $matriculaDiscente = '20141F2GR0292';
                         $scolar = ViewAcompanhamentoAluno::where('matricula_aluno', $matriculaDiscente)->orderBy('cod_aval', 'DESC')->limit(4)->get();
 
-                        //   dd($scolar->matricula_aluno);
-
-
-                        if ($scolar != null) {
+                        if ($scolar != null && $scolar->count() > 0) {
                             $i = 5;
                             foreach ($scolar as $scolars) {
-
                                 $i--;
 
                                 Notification::make()
@@ -108,7 +108,7 @@ class MedidaDisciplinarResource extends Resource
                                     ->warning()
                                     ->color('danger')
                                     ->body(
-                                        '<b>PERFIL DO DISCENTE NO SCOLAR</b>.<br>
+                                        '<b>PERFIL DO DISCENTE ' .$scolars->nome_aluno. ' NO SCOLAR</b>.<br>
                                          <b>4 ÚLTIMAS AVALIAÇÕES Nº </b>' . $i . '<br>
                                 
                                 PARTICIPAÇÃO: '  . $scolars->nt_A1_participacao . '-'
@@ -141,15 +141,12 @@ class MedidaDisciplinarResource extends Resource
                                             . $scolars->nt_A3_cooperacao . '-'
                                             . $scolars->nt_A4_cooperacao . '-    
                                                         <br>'
-
-
                                     )
-
                                     ->persistent()
-                                    //  ->duration(5000)
                                     ->send();
                             }
                         }
+                    }
                     })
                     ->editOptionForm([
 
