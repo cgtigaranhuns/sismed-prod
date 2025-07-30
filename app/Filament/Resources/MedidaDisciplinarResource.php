@@ -357,7 +357,7 @@ class MedidaDisciplinarResource extends Resource
                     ->searchable()
                     ->label('Discente')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('grupo_discentes_id')
+                Tables\Columns\TextColumn::make('grupo_discente_id')
                     ->label('Grupo de Discentes')
                     ->formatStateUsing(function ($state) {
                         if (empty($state)) {
