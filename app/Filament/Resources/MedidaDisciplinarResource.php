@@ -187,12 +187,12 @@ class MedidaDisciplinarResource extends Resource
                 ])
 
                     ->schema([
-                        Forms\Components\Select::make('grupo_discentes_id')
+                        Forms\Components\Select::make('grupo_discente_id')
                             ->label('Grupo de Discentes')
                             ->native(false)
                             ->live(debounce: 300)                            
                             ->relationship(
-                                name: 'GrupoDiscentes',
+                                name: 'GrupoDiscente',
                                 modifyQueryUsing: fn(Builder $query) => $query->orderBy('name')->orderBy('username'),
                             )
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->username}")
