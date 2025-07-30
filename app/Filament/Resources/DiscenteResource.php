@@ -87,7 +87,8 @@ class DiscenteResource extends Resource
                     ->label('Email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('data_nascimento')
-                    ->date()
+                    ->date('d/m/Y')
+                    ->label('Data Nascimento')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('idade')
                     ->numeric()

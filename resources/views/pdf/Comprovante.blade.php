@@ -12,7 +12,8 @@
             font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
             background: #fff;
             color: #222;
-            margin: 30px;
+            margin: 5px;
+            width: 100%;
         }
 
         .tabela {
@@ -23,7 +24,8 @@
             background: #fafafa;
         }
 
-        .tabela td, .tabela th {
+        .tabela td,
+        .tabela th {
             border: 1px solid #d1d5db;
             padding: 10px 12px;
             font-size: 14px;
@@ -51,7 +53,7 @@
         }
 
         label.alinhamento {
-            
+
             min-width: 90px;
             font-size: 13px;
             font-weight: 600;
@@ -134,57 +136,72 @@
     </table>
 
     <div class="center" style="font-size: 16px; font-weight: bold; margin-bottom: 18px;">
-        Medida Disciplinar nº {{$md->id}}
+        Medida Disciplinar nº {{ $md->id }}
     </div>
 
     <fieldset>
         <legend>Identificação</legend>
         <table class="tabela">
             <tr>
-            @if(empty($nomeDiscente) && !empty($grupoDiscentes) && count($grupoDiscentes))
-                @foreach($grupoDiscentes as $discente)
-                    <tr>
-                        <td>
-                            <label class="alinhamento">Nome:</label>
-                            {{ $discente->name ?? '-' }}
-                        </td>
-                        <td>
-                            <label class="alinhamento">Matrícula:</label>
-                            {{ $discente->username ?? '-' }}
-                        </td>
-                    </tr>
-                @endforeach
-            @else
+                @if (empty($nomeDiscente) && !empty($grupoDiscentes) && count($grupoDiscentes))
+
+                    @foreach ($grupoDiscentes as $discente)
+            <tr>
                 <td>
                     <label class="alinhamento">Nome:</label>
-                    {{ $nomeDiscente ?? '-' }}
+                    {{ $discente->name ?? '-' }}
                 </td>
                 <td>
                     <label class="alinhamento">Matrícula:</label>
-                    {{ $matriculaDiscente ?? '-' }}
+                    {{ $discente->username ?? '-' }}
                 </td>
-            @endif
-            </tr>
-            <tr>
                 <td>
                     <label class="alinhamento">Curso:</label>
-                    {{ $cursoDiscente ?? '-' }}
+                    {{ $discente->curso->nome ?? '-' }}
                 </td>
                 <td>
                     <label class="alinhamento">Turno:</label>
-                    {{ $turnoDiscente ?? '-' }}
+                    {{ $discente->turno->nome ?? '-' }}
                 </td>
-            </tr>
-            <tr>
                 <td>
                     <label class="alinhamento">Modalidade:</label>
-                    {{ $modalidadeDiscente ?? '-' }}
+                    {{ $discente->modalidade->nome ?? '-' }}
                 </td>
                 <td>
                     <label class="alinhamento">Período/Ano:</label>
-                    {{ $periodoDiscente ?? '-' }}
-                </td>
+                    {{ $discente->periodo->nome ?? '-' }}
             </tr>
+            @endforeach
+        @else
+            <td>
+                <label class="alinhamento">Nome:</label>
+                {{ $nomeDiscente ?? '-' }}
+            </td>
+            <td>
+                <label class="alinhamento">Matrícula:</label>
+                {{ $matriculaDiscente ?? '-' }}
+            </td>
+
+            <td>
+                <label class="alinhamento">Curso:</label>
+                {{ $cursoDiscente ?? '-' }}
+            </td>
+            <td>
+                <label class="alinhamento">Turno:</label>
+                {{ $turnoDiscente ?? '-' }}
+            </td>
+
+            <td>
+                <label class="alinhamento">Modalidade:</label>
+                {{ $modalidadeDiscente ?? '-' }}
+            </td>
+            <td>
+                <label class="alinhamento">Período/Ano:</label>
+                {{ $periodoDiscente ?? '-' }}
+            </td>            
+            @endif
+            </tr>
+
         </table>
     </fieldset>
 
@@ -237,17 +254,17 @@
             <td>
                 <span class="assinatura-linha"></span>
                 <div class="assinatura-label">Assinatura do Servidor</div>
-                <div class="assinatura-nome">{{$md->user->name}}</div>
-                <div class="assinatura-label"><b>SIAPE:</b> {{$md->user->username}}</div>
+                <div class="assinatura-nome">{{ $md->user->name }}</div>
+                <div class="assinatura-label"><b>SIAPE:</b> {{ $md->user->username }}</div>
             </td>
             <td>
-                @if(empty($nomeDiscente) && !empty($grupoDiscentes) && count($grupoDiscentes))
-                    @foreach($grupoDiscentes as $discente)
+                @if (empty($nomeDiscente) && !empty($grupoDiscentes) && count($grupoDiscentes))
+                    @foreach ($grupoDiscentes as $discente)
                         <span class="assinatura-linha"></span>
                         <div class="assinatura-label">Assinatura do Discente</div>
                         <div class="assinatura-nome">{{ $discente->name ?? '-' }}</div>
                         <div class="assinatura-label"><b>Matrícula:</b> {{ $discente->username ?? '-' }}</div>
-                        @if(!$loop->last)
+                        @if (!$loop->last)
                             <br>
                         @endif
                     @endforeach

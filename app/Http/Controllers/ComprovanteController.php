@@ -30,8 +30,8 @@ class ComprovanteController extends Controller
 
         // Busca todos os discentes do grupo, se houver
         $grupoDiscentes = [];
-        if (empty($nomeDiscente) && !empty($md->grupo_discentes_id) && is_array($md->grupo_discentes_id)) {
-            $grupoDiscentes = Discente::whereIn('id', $md->grupo_discentes_id)->get();
+        if (empty($nomeDiscente) && !empty($md->grupo_discente_id) && is_array($md->grupo_discente_id)) {
+            $grupoDiscentes = Discente::whereIn('id', $md->grupo_discente_id)->get();
         }
 
         return Pdf::loadView('pdf.Comprovante', compact([
