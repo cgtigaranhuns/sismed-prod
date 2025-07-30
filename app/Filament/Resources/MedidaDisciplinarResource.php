@@ -192,7 +192,7 @@ class MedidaDisciplinarResource extends Resource
                             ->native(false)
                             ->live(debounce: 300)                            
                             ->relationship(
-                                name: 'GrupoDiscente',
+                                name: 'GrupoDiscentes',
                                 modifyQueryUsing: fn(Builder $query) => $query->orderBy('name')->orderBy('username'),
                             )
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name} - {$record->username}")

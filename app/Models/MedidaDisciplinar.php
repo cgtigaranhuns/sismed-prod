@@ -38,11 +38,11 @@ class MedidaDisciplinar extends Model
         // Chain fluent methods for configuration options
     } 
 
-    public function Discente() {
+    public function Discentes() {
         return $this->belongsTo(Discente::class);
     }
 
-    public function GrupoDiscente() {
+    public function GrupoDiscentes() {
         return $this->belongsTo(Discente::class);
     }
 
