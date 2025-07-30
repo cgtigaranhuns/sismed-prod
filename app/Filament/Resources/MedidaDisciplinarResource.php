@@ -146,7 +146,7 @@ class MedidaDisciplinarResource extends Resource
                                             . ($scolars->nt_A4_cooperacao ?? '-') . '-    
                                                         <br>'
                                     )
-                                    ->duration(15)
+                                    ->seconds(15)
                                     ->send();
                             }
                         }
@@ -298,7 +298,7 @@ class MedidaDisciplinarResource extends Resource
                                                         . ($scolars->nt_A4_cooperacao ?? '-') . '-    
                                                             <br>'
                                                 )
-                                                ->duration(15)
+                                                ->seconds(15)
                                                 ->send();
                                         }
                                     }
