@@ -57,13 +57,16 @@ class MedidaDisciplinarResource extends Resource
                     ->searchable(['name', 'username'])
                     ->afterStateUpdated(function ($state) {
                         if (!$state) return;
-
+ 
                         //VERIFICAR SE DISCENTE JÁ TEM REGISTRO
-                        $md = MedidaDisciplinar::where('discente_id', $state)->orWhere('grupo_discentes_id', $state);
-                        $md_cat = $md->orderBy('id', 'DESC')->first();
-                        $cont_md = $md->count();
-
-                        if ($cont_md > 0 && $md_cat) {
+                        $mdQuery = MedidaDisciplinar::where('discente_id', $state)
+                            ->orWhereJsonContains('grupo_discente_id', $state);
+ 
+                        $cont_md = $mdQuery->count();
+ 
+                        if ($cont_md > 0) {
+                            $md_cat = (clone $mdQuery)->orderBy('id', 'DESC')->first();
+ 
                             Notification::make()
                                 ->title('ATENÇÃO')
                                 ->warning()
@@ -205,13 +208,14 @@ class MedidaDisciplinarResource extends Resource
                         }
 
                         // VERIFICAR SE DISCENTE JÁ TEM REGISTRO
-                        $discentes = is_array($state) ? $state : [$state];
+                        $discenteIds = is_array($state) ? $state : [$state];
                         
-                        foreach ($discentes as $discenteId) {
-                            $md = MedidaDisciplinar::where('discente_id', $discenteId)
-                                ->orWhere('grupo_discentes_id', 'like', '%' . $discenteId . '%');
-                            $md_cat = $md->orderBy('id', 'DESC')->first();
-                            $cont_md = $md->count();
+                        foreach ($discenteIds as $discenteId) {
+                            $mdQuery = MedidaDisciplinar::where('discente_id', $discenteId)
+                                ->orWhereJsonContains('grupo_discente_id', $discenteId);
+                            
+                            $cont_md = $mdQuery->count();
+                            $md_cat = $cont_md > 0 ? (clone $mdQuery)->orderBy('id', 'DESC')->first() : null;
 
                             if ($cont_md > 0 && $md_cat) {
                                 Notification::make()
@@ -236,9 +240,9 @@ class MedidaDisciplinarResource extends Resource
                         }
 
                         //VERIFICA NO SCOLAR 
-                        $discentes = Discente::whereIn('id', $discentes)->get();
+                        $discentesModels = Discente::whereIn('id', $discenteIds)->get();
 
-                        foreach ($discentes as $discente) {
+                        foreach ($discentesModels as $discente) {
                             if (empty($discente->username)) {
                                 continue;
                             }
