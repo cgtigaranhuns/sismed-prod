@@ -25,7 +25,7 @@ class ComprovanteController extends Controller
         $nivel = match ($md->nivel) {
             1 => 'LEVE',
             2 => 'MÉDIO',
-            default => 'GRAVE',
+            3 => 'GRAVE',
         };
 
         // Busca todos os discentes do grupo, se houver
