@@ -22,11 +22,15 @@ class ComprovanteController extends Controller
         $nomeCategoria = !empty($md->categoria?->nome) ? $md->categoria->nome : null;
         $periodoDiscente = !empty($md->discente?->periodo?->nome) ? $md->discente->periodo->nome : null;
 
-        $nivel = match ($md->nivel) {
-            1 => 'LEVE',
-            2 => 'MÉDIO',
-            3 => 'GRAVE',
-        };
+        if($md->nivel == 1) {
+            $nivel = 'LEVE';
+        } elseif($md->nivel == 2) {
+            $nivel = 'MÉDIO';
+        } elseif($md->nivel == 3) {
+            $nivel = 'GRAVE';
+        } else {
+            $nivel = 'Desconhecido';
+        }
 
         // Busca todos os discentes do grupo, se houver
         $grupoDiscentes = [];
